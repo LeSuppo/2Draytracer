@@ -16,9 +16,18 @@ public:
         {
             for (size_t x = 0; x < 16; x++)
             {
-                char noise = terrain.get_noise(pos_x + x, pos_y + y);
-                Color c(noise, noise, noise);
-                Pixel p = Pixel(0, 0, c, Vector3(0, 0, 1));
+                char noise_ax = terrain.get_noise(pos_x + x - 1, pos_y + y);
+                char noise_ay = terrain.get_noise(pos_x + x, pos_y + y - 1);
+                char noise_bx = terrain.get_noise(pos_x + x + 1, pos_y + y);
+                char noise_by = terrain.get_noise(pos_x + x, pos_y + y + 1);
+                char dx = noise_ax - noise_bx;
+                char dy = noise_ay - noise_by;
+                Color c(0, 96, 0);
+                Pixel p = Pixel(pos_x + x, pos_y + y, c,
+                                Vector3(-dx, dy, 1).normalized());
+                // p = Pixel(pos_x + x, pos_y + y, c, Vector3(0, 0,
+                // 1).normalized()); p = Pixel(pos_x + x, pos_y + y, c,
+                // Vector3(noise_ax, noise_ay, 1).normalized());
                 pixels_.push_back(p);
             }
         }
@@ -34,7 +43,7 @@ public:
         if (rel_x > 16 || rel_x > 16)
         {
             // std::cout << "x: " << rel_x << " y: " << rel_y << std::endl;
-            return pixels_[0];
+            return Pixel(0, 0, Color(0, 0, 255), Vector3(0, 0, 1));
         }
         return pixels_[rel_y * 16 + rel_x];
     }

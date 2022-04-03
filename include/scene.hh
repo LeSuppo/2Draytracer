@@ -15,7 +15,8 @@ class Scene
 public:
     Scene(Camera camera, double ns, double seed, size_t chunk_size_x,
           size_t chunk_size_y)
-        : camera_(camera)
+        : light_(Light(1, Vector3(0, 0, -10)))
+        , camera_(camera)
         , ns_(ns)
         , seed_(seed)
         , chunk_size_x_(chunk_size_x)
@@ -31,11 +32,6 @@ public:
             }
         }
     }
-
-    Scene(Camera camera, double ns)
-        : camera_(camera)
-        , ns_(ns)
-    {}
 
     double ns() const
     {
@@ -67,9 +63,19 @@ public:
         camera_.change_pos(vec);
     }
 
+    Light get_sun()
+    {
+        return light_;
+    }
+
+    void move_sun(Vector3 vec)
+    {
+        light_.set_position(vec);
+    }
+
 private:
     std::vector<Chunk> chunks_;
-    std::vector<Light> lights_;
+    Light light_;
     Camera camera_;
     double ns_;
     double seed_;

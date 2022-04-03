@@ -18,6 +18,11 @@ public:
         return color_;
     }
 
+    Vector3 normal()
+    {
+        return normal_;
+    }
+
 private:
     size_t x_;
     size_t y_;

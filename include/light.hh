@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include "vector3.hh"
 
 class Light
 {

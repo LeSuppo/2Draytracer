@@ -33,11 +33,14 @@ std::vector<unsigned char> fill_buffer(const unsigned int texWidth,
                 std::cout << "y: " << hit_y << " real: " << pos_hit;
             */
             Pixel p = sc.get_pixel(hit_x, hit_y);
+            double light_intensity = dot(
+                p.normal(), (sc.get_sun().get_pos() - pos_hit).normalized());
+            // std::cout << light_intensity << std::endl;
 
             size_t offset = (y * 4) * SCREEN_WIDTH + (x * 4);
-            pixels[offset + 0] = p.get_color().blue(); // b
-            pixels[offset + 1] = p.get_color().green(); // g
-            pixels[offset + 2] = p.get_color().red(); // r
+            pixels[offset + 0] = p.get_color().blue() * light_intensity; // b
+            pixels[offset + 1] = p.get_color().green() * light_intensity; // g
+            pixels[offset + 2] = p.get_color().red() * light_intensity; // r
             pixels[offset + 3] = SDL_ALPHA_OPAQUE; // a
         }
     }
@@ -82,6 +85,8 @@ int main()
 
     unsigned int frames = 0;
     Uint64 start = SDL_GetPerformanceCounter();
+
+    int i = 0;
 
     while (running)
     {
@@ -141,6 +146,10 @@ int main()
         // splat down some random pixels
         std::vector<unsigned char> pixels =
             fill_buffer(texWidth, texHeight, sc);
+
+        sc.move_sun(Vector3(i / 10.0, 0, -10));
+
+        i = (i + 1) % 100;
 
         if (useLocktexture)
         {
