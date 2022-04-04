@@ -24,9 +24,9 @@ public:
                     x, y + 1, terrain.get_noise(pos_x + x, pos_y + y + 1));
                 Vector3 b2 = Vector3(
                     x, y - 1, terrain.get_noise(pos_x + x, pos_y + y - 1));
-                Vector3 a = a2 - b1;
-                Vector3 b = b2 - a1;
-                Vector3 normal = cross(a, b);
+                Vector3 a = a2 - a1;
+                Vector3 b = b2 - b1;
+                Vector3 normal = -cross(a, b);
                 Color grass(0, 96, 0);
                 Color water(0, 0, 255);
                 char noise = terrain.get_noise(pos_x + x, pos_y + y);
@@ -35,6 +35,12 @@ public:
                 if (noise <= 50)
                 {
                     p = Pixel(pos_x + x, pos_y + y, water, Vector3(0, 0, 1));
+                }
+                if ((pos_x == 16 * 16 && pos_y == 16 * 16)
+                    || (pos_x == 0 && pos_y == 0))
+                {
+                    p = Pixel(pos_x + x, pos_y + y, Color(255, 0, 0),
+                              Vector3(0, 0, 1));
                 }
                 pixels_.push_back(p);
             }

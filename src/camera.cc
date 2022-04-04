@@ -19,6 +19,9 @@ Camera::Camera(Vector3 center, double fov_v, double fov_h, double z_min)
     horizontal_ = viewport_h * u;
     vertical_ = viewport_v * v;
     lower_left_corner_ = center - horizontal_ / 2 - vertical_ / 2 + w;
+    std::cout << "center: " << center;
+    std::cout << "left corner: " << lower_left_corner_;
+    std::cout << "right corner: " << lower_left_corner_ + horizontal_;
 }
 
 Ray Camera::get_ray(double x, double y) const

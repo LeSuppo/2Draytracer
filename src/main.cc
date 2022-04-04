@@ -6,36 +6,32 @@
 
 #include "scene.hh"
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 960
+const size_t screen_width = 1280;
+const size_t screen_height = 960;
 
 const double fov_w = 90;
 const double fov_h = 110;
 double dist_to_screen = 1;
 
-std::vector<unsigned char> fill_buffer(const unsigned int texWidth,
-                                       const unsigned int texHeight, Scene sc)
+std::vector<unsigned char> fill_buffer(Scene sc)
 {
-    std::vector<unsigned char> pixels(texWidth * texHeight * 4, 0);
-    for (size_t y = SCREEN_HEIGHT - 1; y < SCREEN_HEIGHT; y--)
-    // for (size_t y = 0; y < SCREEN_HEIGHT; y++)
+    std::vector<unsigned char> pixels(screen_width * screen_height * 4, 0);
+    // for (size_t y = screen_height - 1; y < screen_height; y--)
+    for (double y = 0; y < screen_height; y++)
     {
-        for (size_t x = 0; x < SCREEN_WIDTH; x++)
+        for (double x = 0; x < screen_width; x++)
         {
-            Ray r = sc.get_camera().get_ray(x, y);
+            double x_pixel = x / screen_width;
+            double y_pixel = y / screen_height;
+            Ray r = sc.get_camera().get_ray(x_pixel, y_pixel);
             Vector3 pos_hit = hit(r);
-            size_t hit_x = static_cast<size_t>(pos_hit.x());
-            size_t hit_y = static_cast<size_t>(pos_hit.y());
-            Pixel p = sc.get_pixel(hit_x, hit_y);
+            double x_hit = pos_hit.x();
+            double y_hit = pos_hit.y();
+            Pixel p = sc.get_pixel(x_hit, y_hit);
             Vector3 light_ray = (pos_hit - sc.get_sun().get_pos()).normalized();
             double light_intensity = dot(p.normal(), light_ray);
-            // std::cout << light_intensity << std::endl;
-            /*if (p.get_color().blue() != 255)
-            {
-                std::cout << p.normal() << light_ray << std::endl;
-            }*/
 
-            size_t offset = (y * 4) * SCREEN_WIDTH + (x * 4);
+            size_t offset = (y * 4) * screen_width + (x * 4);
             pixels[offset + 0] = p.get_color().blue() * light_intensity; // b
             pixels[offset + 1] = p.get_color().green() * light_intensity; // g
             pixels[offset + 2] = p.get_color().red() * light_intensity; // r
@@ -50,8 +46,8 @@ int main()
     SDL_Init(SDL_INIT_EVERYTHING);
 
     SDL_Window *window = SDL_CreateWindow("Bite", SDL_WINDOWPOS_UNDEFINED,
-                                          SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
-                                          SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+                                          SDL_WINDOWPOS_UNDEFINED, screen_width,
+                                          screen_height, SDL_WINDOW_SHOWN);
 
     SDL_Renderer *renderer =
         SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -66,16 +62,14 @@ int main()
                   << std::endl;
     }
 
-    Camera cam(Vector3(16 * 16, 16 * 16, -0.05), fov_w / 2, fov_h / 2,
+    Camera cam(Vector3(16 * 16, 16 * 16, -100), fov_w / 2, fov_h / 2,
                dist_to_screen);
 
     Scene sc(cam, 1, 2711, 32, 32);
 
-    const unsigned int texWidth = SCREEN_WIDTH;
-    const unsigned int texHeight = SCREEN_HEIGHT;
-    SDL_Texture *texture =
-        SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-                          SDL_TEXTUREACCESS_STREAMING, texWidth, texHeight);
+    SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+                                             SDL_TEXTUREACCESS_STREAMING,
+                                             screen_width, screen_height);
 
     SDL_Event event;
     bool running = true;
@@ -112,44 +106,46 @@ int main()
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_UP == event.key.keysym.scancode)
             {
-                sc.move_camera(Vector3(0, -1, 0));
+                sc.move_camera(Vector3(0, -10, 0));
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_RIGHT == event.key.keysym.scancode)
             {
-                sc.move_camera(Vector3(1, 0, 0));
+                sc.move_camera(Vector3(10, 0, 0));
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_LEFT == event.key.keysym.scancode)
             {
-                sc.move_camera(Vector3(-1, 0, 0));
+                sc.move_camera(Vector3(-10, 0, 0));
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_DOWN == event.key.keysym.scancode)
             {
-                sc.move_camera(Vector3(0, 1, 0));
+                sc.move_camera(Vector3(0, 10, 0));
             }
-            /*if (SDL_KEYDOWN == event.type
+            if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_I == event.key.keysym.scancode)
             {
-                sc.move_camera(Vector3(0,0,-0.5));
+                sc.move_camera(Vector3(0, 0, 5));
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_O == event.key.keysym.scancode)
             {
-                sc.move_camera(Vector3(0,0,0.5));
-            }*/
+                sc.move_camera(Vector3(0, 0, -5));
+            }
         }
 
         // splat down some random pixels
-        std::vector<unsigned char> pixels =
-            fill_buffer(texWidth, texHeight, sc);
+        std::vector<unsigned char> pixels = fill_buffer(sc);
 
-        // sc.move_sun(Vector3(i / 10.0, 0, -10));
-        sc.move_sun(Vector3(sc.get_camera().get_center().x(),
-                            sc.get_camera().get_center().y(), -15));
+        Vector3 sunpos(i, 0, -100);
+        sc.move_sun(sunpos);
+        // std::cout << sunpos;
 
-        i = (i + 1) % 100;
+        // sc.move_sun(Vector3(sc.get_camera().get_center().x(),
+        //                     sc.get_camera().get_center().y(), -100));
+
+        i = (i + 10) % (16 * 32);
 
         if (useLocktexture)
         {
@@ -162,7 +158,7 @@ int main()
         }
         else
         {
-            SDL_UpdateTexture(texture, NULL, pixels.data(), texWidth * 4);
+            SDL_UpdateTexture(texture, NULL, pixels.data(), screen_width * 4);
         }
 
         SDL_RenderCopy(renderer, texture, NULL, NULL);
