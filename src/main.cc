@@ -26,16 +26,14 @@ std::vector<unsigned char> fill_buffer(const unsigned int texWidth,
             Vector3 pos_hit = hit(r);
             size_t hit_x = static_cast<size_t>(pos_hit.x());
             size_t hit_y = static_cast<size_t>(pos_hit.y());
-            /*if (hit_x > 16*32)
-                std::cout << "x: " << hit_x << " real: " << pos_hit;
-
-            if (hit_y > 16*32)
-                std::cout << "y: " << hit_y << " real: " << pos_hit;
-            */
             Pixel p = sc.get_pixel(hit_x, hit_y);
-            double light_intensity = dot(
-                p.normal(), (sc.get_sun().get_pos() - pos_hit).normalized());
+            Vector3 light_ray = (pos_hit - sc.get_sun().get_pos()).normalized();
+            double light_intensity = dot(p.normal(), light_ray);
             // std::cout << light_intensity << std::endl;
+            /*if (p.get_color().blue() != 255)
+            {
+                std::cout << p.normal() << light_ray << std::endl;
+            }*/
 
             size_t offset = (y * 4) * SCREEN_WIDTH + (x * 4);
             pixels[offset + 0] = p.get_color().blue() * light_intensity; // b
@@ -147,7 +145,9 @@ int main()
         std::vector<unsigned char> pixels =
             fill_buffer(texWidth, texHeight, sc);
 
-        sc.move_sun(Vector3(i / 10.0, 0, -10));
+        // sc.move_sun(Vector3(i / 10.0, 0, -10));
+        sc.move_sun(Vector3(sc.get_camera().get_center().x(),
+                            sc.get_camera().get_center().y(), -15));
 
         i = (i + 1) % 100;
 

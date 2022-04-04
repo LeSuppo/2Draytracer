@@ -12,22 +12,30 @@ public:
         : x_(pos_x)
         , y_(pos_y)
     {
-        for (size_t y = 0; y < 16; y++)
+        for (int y = 0; y < 16; y++)
         {
-            for (size_t x = 0; x < 16; x++)
+            for (int x = 0; x < 16; x++)
             {
-                char noise_ax = terrain.get_noise(pos_x + x - 1, pos_y + y);
-                char noise_ay = terrain.get_noise(pos_x + x, pos_y + y - 1);
-                char noise_bx = terrain.get_noise(pos_x + x + 1, pos_y + y);
-                char noise_by = terrain.get_noise(pos_x + x, pos_y + y + 1);
-                char dx = noise_ax - noise_bx;
-                char dy = noise_ay - noise_by;
-                Color c(0, 96, 0);
-                Pixel p = Pixel(pos_x + x, pos_y + y, c,
-                                Vector3(-dx, dy, 1).normalized());
-                // p = Pixel(pos_x + x, pos_y + y, c, Vector3(0, 0,
-                // 1).normalized()); p = Pixel(pos_x + x, pos_y + y, c,
-                // Vector3(noise_ax, noise_ay, 1).normalized());
+                Vector3 a1 = Vector3(
+                    x + 1, y, terrain.get_noise(pos_x + x + 1, pos_y + y));
+                Vector3 a2 = Vector3(
+                    x - 1, y, terrain.get_noise(pos_x + x - 1, pos_y + y));
+                Vector3 b1 = Vector3(
+                    x, y + 1, terrain.get_noise(pos_x + x, pos_y + y + 1));
+                Vector3 b2 = Vector3(
+                    x, y - 1, terrain.get_noise(pos_x + x, pos_y + y - 1));
+                Vector3 a = a2 - b1;
+                Vector3 b = b2 - a1;
+                Vector3 normal = cross(a, b);
+                Color grass(0, 96, 0);
+                Color water(0, 0, 255);
+                char noise = terrain.get_noise(pos_x + x, pos_y + y);
+                Pixel p =
+                    Pixel(pos_x + x, pos_y + y, grass, normal.normalized());
+                if (noise <= 50)
+                {
+                    p = Pixel(pos_x + x, pos_y + y, water, Vector3(0, 0, 1));
+                }
                 pixels_.push_back(p);
             }
         }
