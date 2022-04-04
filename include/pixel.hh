@@ -6,9 +6,10 @@
 class Pixel
 {
 public:
-    Pixel(size_t x, size_t y, Color color, Vector3 normal)
+    Pixel(size_t x, size_t y, size_t z, Color color, Vector3 normal)
         : x_(x)
         , y_(y)
+        , z_(z)
         , color_(color)
         , normal_(normal)
     {}
@@ -26,6 +27,7 @@ public:
 private:
     size_t x_;
     size_t y_;
+    size_t z_;
     Color color_;
     Vector3 normal_;
 };

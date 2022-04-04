@@ -32,9 +32,10 @@ std::vector<unsigned char> fill_buffer(Scene sc)
             double light_intensity = dot(p.normal(), light_ray);
 
             size_t offset = (y * 4) * screen_width + (x * 4);
-            pixels[offset + 0] = p.get_color().blue() * light_intensity; // b
-            pixels[offset + 1] = p.get_color().green() * light_intensity; // g
-            pixels[offset + 2] = p.get_color().red() * light_intensity; // r
+            Color color = p.get_color() * light_intensity;
+            pixels[offset + 0] = color.blue(); // b
+            pixels[offset + 1] = color.green(); // g
+            pixels[offset + 2] = color.red(); // r
             pixels[offset + 3] = SDL_ALPHA_OPAQUE; // a
         }
     }
@@ -43,6 +44,8 @@ std::vector<unsigned char> fill_buffer(Scene sc)
 
 int main()
 {
+    std::srand(time(NULL));
+    double seed = std::rand();
     SDL_Init(SDL_INIT_EVERYTHING);
 
     SDL_Window *window = SDL_CreateWindow("Bite", SDL_WINDOWPOS_UNDEFINED,
@@ -65,7 +68,7 @@ int main()
     Camera cam(Vector3(16 * 16, 16 * 16, -100), fov_w / 2, fov_h / 2,
                dist_to_screen);
 
-    Scene sc(cam, 1, 2711, 32, 32);
+    Scene sc(cam, 1, seed, 32, 32, 16);
 
     SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
                                              SDL_TEXTUREACCESS_STREAMING,
@@ -138,7 +141,7 @@ int main()
         // splat down some random pixels
         std::vector<unsigned char> pixels = fill_buffer(sc);
 
-        Vector3 sunpos(i, 0, -100);
+        Vector3 sunpos(i, i, -100);
         sc.move_sun(sunpos);
         // std::cout << sunpos;
 

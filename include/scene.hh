@@ -13,21 +13,23 @@
 class Scene
 {
 public:
-    Scene(Camera camera, double ns, double seed, size_t chunk_size_x,
-          size_t chunk_size_y)
-        : light_(Light(1, Vector3(0, 0, -10)))
+    Scene(Camera camera, double ns, double seed, size_t chunk_number_x,
+          size_t chunk_number_y, size_t chunk_size)
+        : light_(Light(1, Vector3(0, 0, -100)))
         , camera_(camera)
         , ns_(ns)
         , seed_(seed)
-        , chunk_size_x_(chunk_size_x)
-        , chunk_size_y_(chunk_size_y)
+        , chunk_number_x_(chunk_number_x)
+        , chunk_number_y_(chunk_number_y)
+        , chunk_size_(chunk_size)
     {
         Terrain_Noise terrain = Terrain_Noise(seed);
-        for (size_t y = 0; y < 32; y++)
+        for (size_t y = 0; y < chunk_number_y; y++)
         {
-            for (size_t x = 0; x < 32; x++)
+            for (size_t x = 0; x < chunk_number_x; x++)
             {
-                Chunk c = Chunk(x * 16, y * 16, terrain);
+                Chunk c =
+                    Chunk(x * chunk_size, y * chunk_size, chunk_size, terrain);
                 chunks_.push_back(c);
             }
         }
@@ -40,17 +42,14 @@ public:
 
     Pixel get_pixel(size_t x, size_t y)
     {
-        // std::cout << "size_x: " << chunk_size_x_*32 << " size_y: " <<
-        // chunk_size_y_ * 32 << std::endl;
-        size_t chunk_x = x / 16;
-        size_t chunk_y = y / 16;
-        if (chunk_x > 32 || chunk_y > 32)
+        size_t chunk_x = x / chunk_size_;
+        size_t chunk_y = y / chunk_size_;
+        if (chunk_x > chunk_size_ * 2 || chunk_y > chunk_size_ * 2)
         {
-            // std::cout << "x: " << chunk_x << " y: " << chunk_y << std::endl;
-            return Pixel(0, 0, Color(0, 0, 0), Vector3(0, 0, 1));
+            return Pixel(0, 0, 0, Color(0, 0, 0), Vector3(0, 0, 1));
         }
 
-        return chunks_[chunk_y * chunk_size_x_ + chunk_x].get_pixel(x, y);
+        return chunks_[chunk_y * chunk_number_x_ + chunk_x].get_pixel(x, y);
     }
 
     Camera get_camera() const
@@ -79,8 +78,9 @@ private:
     Camera camera_;
     double ns_;
     double seed_;
-    size_t chunk_size_x_;
-    size_t chunk_size_y_;
+    size_t chunk_number_x_;
+    size_t chunk_number_y_;
+    size_t chunk_size_;
 };
 
 Vector3 hit(Ray r);
