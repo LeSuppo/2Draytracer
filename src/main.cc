@@ -77,8 +77,8 @@ int main()
                   << std::endl;
     }
 
-    size_t base_x = -128;
-    size_t base_y = -128;
+    int base_x = -128;
+    int base_y = -128;
     size_t chunk_size = 16;
     size_t nb_chunks_x = 32;
     size_t nb_chunks_y = 32;

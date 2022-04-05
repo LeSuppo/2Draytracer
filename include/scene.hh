@@ -14,8 +14,7 @@ class Scene
 {
 public:
     Scene(Camera camera, double ns, double seed, size_t chunk_number_x,
-          size_t chunk_number_y, size_t x_base, size_t y_base,
-          size_t chunk_size)
+          size_t chunk_number_y, int x_base, int y_base, size_t chunk_size)
         : light_(Light(1, Vector3(0, 0, -100)))
         , camera_(camera)
         , ns_(ns)
@@ -43,7 +42,7 @@ public:
         return ns_;
     }
 
-    Pixel get_pixel(size_t x, size_t y)
+    Pixel get_pixel(int x, int y)
     {
         size_t chunk_x = (x - x_base_) / chunk_size_;
         size_t chunk_y = (y - y_base_) / chunk_size_;
@@ -81,8 +80,8 @@ private:
     Camera camera_;
     double ns_;
     double seed_;
-    size_t x_base_;
-    size_t y_base_;
+    int x_base_;
+    int y_base_;
     size_t chunk_number_x_;
     size_t chunk_number_y_;
     size_t chunk_size_;

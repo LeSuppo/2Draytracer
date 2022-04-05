@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-Chunk::Chunk(size_t pos_x, size_t pos_y, int size, Terrain_Noise terrain)
+Chunk::Chunk(int pos_x, int pos_y, int size, Terrain_Noise terrain)
     : x_(pos_x)
     , y_(pos_y)
     , size_(size)

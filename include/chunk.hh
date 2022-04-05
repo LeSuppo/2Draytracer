@@ -9,7 +9,7 @@
 class Chunk
 {
 public:
-    Chunk(size_t pos_x, size_t pos_y, int size, Terrain_Noise terrain);
+    Chunk(int pos_x, int pos_y, int size, Terrain_Noise terrain);
 
     Pixel get_pixel(size_t x, size_t y);
 
@@ -31,8 +31,8 @@ public:
     std::shared_ptr<Chunk> get_chunk(size_t x, size_t y);
 
 private:
-    size_t x_;
-    size_t y_;
+    int x_;
+    int y_;
     size_t size_;
     std::vector<Pixel> pixels_;
     std::vector<std::shared_ptr<Object>> objects_;
