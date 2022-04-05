@@ -61,7 +61,7 @@ Chunk::Chunk(int pos_x, int pos_y, int size, Terrain_Noise terrain)
     }
 }
 
-Pixel Chunk::get_pixel(size_t x, size_t y)
+Pixel Chunk::get_pixel(size_t x, size_t y) const
 {
     size_t rel_x = x - x_;
     size_t rel_y = y - y_;

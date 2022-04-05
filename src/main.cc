@@ -13,7 +13,15 @@ const double fov_w = 90;
 const double fov_h = 110;
 double dist_to_screen = 1;
 
-std::vector<unsigned char> fill_buffer(Scene sc)
+void move(Scene &sc)
+{
+    Vector3 r = sc.get_camera().get_position();
+    double x_hit = r.x() - 256;
+    double y_hit = r.y() - 256;
+    sc.update_chunks(x_hit, y_hit);
+}
+
+std::vector<unsigned char> fill_buffer(const Scene &sc)
 {
     std::vector<unsigned char> pixels(screen_width * screen_height * 4, 0);
     // for (size_t y = screen_height - 1; y < screen_height; y--)
@@ -77,8 +85,8 @@ int main()
                   << std::endl;
     }
 
-    int base_x = -128;
-    int base_y = -128;
+    int base_x = 0;
+    int base_y = 0;
     size_t chunk_size = 16;
     size_t nb_chunks_x = 32;
     size_t nb_chunks_y = 32;
@@ -129,21 +137,25 @@ int main()
                 && SDL_SCANCODE_UP == event.key.keysym.scancode)
             {
                 sc.move_camera(Vector3(0, -10, 0));
+                move(sc);
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_RIGHT == event.key.keysym.scancode)
             {
                 sc.move_camera(Vector3(10, 0, 0));
+                move(sc);
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_LEFT == event.key.keysym.scancode)
             {
                 sc.move_camera(Vector3(-10, 0, 0));
+                move(sc);
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_DOWN == event.key.keysym.scancode)
             {
                 sc.move_camera(Vector3(0, 10, 0));
+                move(sc);
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_I == event.key.keysym.scancode)

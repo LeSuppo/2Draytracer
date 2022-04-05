@@ -11,9 +11,9 @@ class Chunk
 public:
     Chunk(int pos_x, int pos_y, int size, Terrain_Noise terrain);
 
-    Pixel get_pixel(size_t x, size_t y);
+    Pixel get_pixel(size_t x, size_t y) const;
 
-    std::vector<std::shared_ptr<Object>> get_objects()
+    std::vector<std::shared_ptr<Object>> get_objects() const
     {
         return objects_;
     }
@@ -27,8 +27,6 @@ public:
     {
         remove(objects_.begin(), objects_.end(), obj);
     }
-
-    std::shared_ptr<Chunk> get_chunk(size_t x, size_t y);
 
 private:
     int x_;
