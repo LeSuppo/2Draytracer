@@ -36,9 +36,4 @@ private:
     size_t size_;
     std::vector<Pixel> pixels_;
     std::vector<std::shared_ptr<Object>> objects_;
-
-    std::shared_ptr<Chunk> north_;
-    std::shared_ptr<Chunk> south_;
-    std::shared_ptr<Chunk> east_;
-    std::shared_ptr<Chunk> west_;
 };

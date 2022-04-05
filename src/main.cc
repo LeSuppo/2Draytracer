@@ -56,7 +56,7 @@ std::vector<unsigned char> fill_buffer(Scene sc)
 
 int main()
 {
-    std::srand(time(NULL));
+    // std::srand(time(NULL));
     double seed = std::rand();
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -77,10 +77,17 @@ int main()
                   << std::endl;
     }
 
-    Camera cam(Vector3(16 * 16, 16 * 16, -100), fov_w / 2, fov_h / 2,
-               dist_to_screen);
+    size_t base_x = -128;
+    size_t base_y = -128;
+    size_t chunk_size = 16;
+    size_t nb_chunks_x = 32;
+    size_t nb_chunks_y = 32;
+    Camera cam(Vector3(base_x + nb_chunks_x * chunk_size / 2,
+                       base_y + nb_chunks_y * chunk_size / 2, -100),
+               fov_w / 2, fov_h / 2, dist_to_screen);
 
-    Scene sc(cam, 1, seed, 32, 32, 16);
+    Scene sc(cam, 1, seed, nb_chunks_x, nb_chunks_y, base_x, base_y,
+             chunk_size);
 
     SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
                                              SDL_TEXTUREACCESS_STREAMING,

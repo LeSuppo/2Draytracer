@@ -68,42 +68,11 @@ Pixel Chunk::get_pixel(size_t x, size_t y)
     if (pixels_.size() != size_ * size_)
         return Pixel(0, 0, 0, Color(255, 0, 255), Vector3(0, 0, 1));
 
-    if (rel_x > size_ || rel_x > size_)
+    size_t i = rel_y * size_ + rel_x;
+    if (i >= size_ * size_)
     {
         // std::cout << "x: " << rel_x << " y: " << rel_y << std::endl;
         return Pixel(0, 0, 0, Color(255, 255, 0), Vector3(0, 0, 1));
     }
-    return pixels_[rel_y * size_ + rel_x];
-}
-
-std::shared_ptr<Chunk> Chunk::get_chunk(size_t x, size_t y)
-{
-    std::shared_ptr<Chunk> res = std::make_shared<Chunk>(*this);
-    size_t diff_x = res->x_ / size_ - x / size_;
-    while (res != nullptr && diff_x != 0)
-    {
-        if (diff_x > 0)
-        {
-            res = res->east_;
-        }
-        else
-        {
-            res = res->west_;
-        }
-        diff_x = res->x_ / size_ - x / size_;
-    }
-    size_t diff_y = res->y_ / size_ - y / size_;
-    while (res != nullptr && diff_y != 0)
-    {
-        if (diff_y > 0)
-        {
-            res = res->south_;
-        }
-        else
-        {
-            res = res->north_;
-        }
-        diff_y = res->y_ / size_ - y / size_;
-    }
-    return res;
+    return pixels_[i];
 }
