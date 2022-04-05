@@ -173,11 +173,10 @@ int main()
         std::vector<unsigned char> pixels = fill_buffer(sc);
 
         Vector3 sunpos(i, i, -100);
-        sc.move_sun(sunpos);
-        // std::cout << sunpos;
+        // sc.move_sun(sunpos);
 
-        // sc.move_sun(Vector3(sc.get_camera().get_center().x(),
-        //                     sc.get_camera().get_center().y(), -100));
+        sc.move_sun(Vector3(sc.get_camera().get_position().x(),
+                            sc.get_camera().get_position().y(), -100));
 
         i = (i + 5) % (16 * 32);
 

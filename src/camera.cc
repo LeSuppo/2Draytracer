@@ -11,7 +11,9 @@ Camera::Camera(Vector3 center, double fov_v, double fov_h, double z_min)
     double viewport_v = 2.0 * tan(alpha) * z_min;
     double viewport_h = 2.0 * tan(beta) * z_min;
 
-    auto w = (Vector3(center.x(), center.y(), 0) - center).normalized();
+    Vector3 focus = Vector3(center.x(), center.y(), 0);
+
+    auto w = (focus - center).normalized();
     auto u = (cross(Vector3(0, 1, 0), w)).normalized();
     auto v = cross(w, u);
 

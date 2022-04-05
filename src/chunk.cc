@@ -71,6 +71,7 @@ Pixel Chunk::get_pixel(size_t x, size_t y) const
     size_t i = rel_y * size_ + rel_x;
     if (i >= size_ * size_)
     {
+        // std::cout<< "size: " << size_ * size_ << " i: " << i << std::endl;
         // std::cout << "x: " << rel_x << " y: " << rel_y << std::endl;
         return Pixel(0, 0, 0, Color(255, 255, 0), Vector3(0, 0, 1));
     }
