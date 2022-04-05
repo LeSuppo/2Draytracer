@@ -11,10 +11,10 @@ public:
         noise_.SetSeed(seed);
     }
 
-    char get_noise(size_t x, size_t y)
+    int get_noise(size_t x, size_t y)
     {
-        double terrain = sum_octave(8, x, y, 0.5, 0.5, 0, 255);
-        return static_cast<char>(terrain);
+        double terrain = sum_octave(16, x, y, 0.4, 0.1, 0, 255);
+        return static_cast<int>(terrain);
     }
 
 private:

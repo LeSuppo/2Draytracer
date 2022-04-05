@@ -31,13 +31,16 @@ public:
                 Color grass(0, 154, 22);
                 Color sand(248, 214, 114);
                 Color stone(136, 140, 141);
+                Color snow(255, 250, 250);
                 Color water(0, 84, 148);
-                char noise = terrain.get_noise(pos_x + x, pos_y + y);
+                int noise = terrain.get_noise(pos_x + x, pos_y + y);
                 Pixel p = Pixel(pos_x + x, pos_y + y, noise, grass,
                                 normal.normalized());
-                if (normal.length() > 0.9)
+                if (p.get_slope() > 0.2)
+                {
                     p = Pixel(pos_x + x, pos_y + y, noise, stone,
                               normal.normalized());
+                }
                 if (noise <= 55)
                 {
                     p = Pixel(pos_x + x, pos_y + y, noise, sand,
@@ -47,6 +50,12 @@ public:
                 {
                     p = Pixel(pos_x + x, pos_y + y, noise, water,
                               Vector3(0, 0, 1));
+                }
+
+                if (noise >= 200)
+                {
+                    p = Pixel(pos_x + x, pos_y + y, noise, snow,
+                              normal.normalized());
                 }
                 if ((pos_x == size * size && pos_y == size * size)
                     || (pos_x == 0 && pos_y == 0))

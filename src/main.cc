@@ -29,8 +29,20 @@ std::vector<unsigned char> fill_buffer(Scene sc)
             double y_hit = pos_hit.y();
             Pixel p = sc.get_pixel(x_hit, y_hit);
             Vector3 light_ray = (pos_hit - sc.get_sun().get_pos()).normalized();
-            double light_intensity = dot(p.normal(), light_ray);
 
+            Vector3 normal = p.normal();
+            if (dot(normal, r.direction()) < 0)
+                normal = -normal;
+            double light_intensity =
+                dot(normal, light_ray) * sc.get_sun().get_intensity();
+
+            /*
+            // Reflection ray
+            Vector3 S =
+                (r.direction() - 2 * normal * dot(normal, direction))
+                .normalized();
+            Ray reflection_ray = Ray(r.origin() + S * 0.001, S);
+            */
             size_t offset = (y * 4) * screen_width + (x * 4);
             Color color = p.get_color() * light_intensity;
             pixels[offset + 0] = color.blue(); // b
@@ -148,7 +160,7 @@ int main()
         // sc.move_sun(Vector3(sc.get_camera().get_center().x(),
         //                     sc.get_camera().get_center().y(), -100));
 
-        i = (i + 10) % (16 * 32);
+        i = (i + 5) % (16 * 32);
 
         if (useLocktexture)
         {
