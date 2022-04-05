@@ -1,17 +1,18 @@
 #pragma once
 
+#include "object.hh"
 #include "ray.hh"
 #include "utils.hh"
 #include "vector3.hh"
 
-class Camera
+class Camera : public Object
 {
 public:
     Camera(Vector3 center, double fov_v, double fov_h, double z_min);
 
     Ray get_ray(double x, double y) const;
 
-    Vector3 get_center() const
+    Vector3 get_position()
     {
         return center_;
     }
@@ -20,6 +21,10 @@ public:
     {
         center_ = center_ + pos;
         lower_left_corner_ = lower_left_corner_ + pos;
+        for (std::shared_ptr<Object> c : children_)
+        {
+            c->change_pos(pos);
+        }
     }
 
     void set_position(Vector3 pos);
