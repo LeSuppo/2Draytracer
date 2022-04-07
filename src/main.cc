@@ -175,8 +175,8 @@ int main()
         Vector3 sunpos(i, i, -100);
         // sc.move_sun(sunpos);
 
-        sc.move_sun(Vector3(sc.get_camera().get_position().x(),
-                            sc.get_camera().get_position().y(), -100));
+        sc.move_sun(Vector3(i + sc.get_camera().get_position().x(),
+                            i + sc.get_camera().get_position().y(), -100));
 
         i = (i + 5) % (16 * 32);
 
