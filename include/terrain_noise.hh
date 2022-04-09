@@ -13,7 +13,7 @@ public:
 
     int get_noise(int x, int y)
     {
-        double terrain = sum_octave(16, x, y, 0.4, 0.1, 0, 255);
+        double terrain = sum_octave(16, x, y, 0.4, 0.3, 0, 255);
         return static_cast<int>(terrain);
     }
 

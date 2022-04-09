@@ -19,6 +19,10 @@ public:
 
     void change_pos(Vector3 pos)
     {
+        if ((center_ + pos).z() >= 0) //|| (center_ + pos).z() < -170)
+        {
+            return;
+        }
         center_ = center_ + pos;
         lower_left_corner_ = lower_left_corner_ + pos;
         for (std::shared_ptr<Object> c : children_)

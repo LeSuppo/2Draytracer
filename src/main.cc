@@ -2,6 +2,7 @@
 #include <cstring>
 #include <iomanip>
 #include <iostream>
+#include <thread>
 #include <vector>
 
 #include "scene.hh"
@@ -12,6 +13,7 @@ const size_t screen_height = 960;
 const double fov_w = 90;
 const double fov_h = 110;
 double dist_to_screen = 1;
+const int max_threads = std::thread::hardware_concurrency();
 
 void move(Scene &sc)
 {
@@ -21,11 +23,12 @@ void move(Scene &sc)
     sc.update_chunks(x_hit, y_hit);
 }
 
-std::vector<unsigned char> fill_buffer(const Scene &sc)
+void fill_buffer(const Scene &sc, double miny, double maxy,
+                 std::vector<unsigned char> *pixels)
 {
-    std::vector<unsigned char> pixels(screen_width * screen_height * 4, 0);
+    // std::vector<unsigned char> pixels(screen_width * screen_height * 4, 0);
     // for (size_t y = screen_height - 1; y < screen_height; y--)
-    for (double y = 0; y < screen_height; y++)
+    for (double y = miny; y < maxy; y++)
     {
         for (double x = 0; x < screen_width; x++)
         {
@@ -43,6 +46,8 @@ std::vector<unsigned char> fill_buffer(const Scene &sc)
                 normal = -normal;
             double light_intensity =
                 dot(normal, light_ray) * sc.get_sun().get_intensity();
+            // if (p.get_color().green() == 84)
+            //     std::cout << dot(normal, light_ray) << std::endl;
 
             /*
             // Reflection ray
@@ -53,13 +58,12 @@ std::vector<unsigned char> fill_buffer(const Scene &sc)
             */
             size_t offset = (y * 4) * screen_width + (x * 4);
             Color color = p.get_color() * light_intensity;
-            pixels[offset + 0] = color.blue(); // b
-            pixels[offset + 1] = color.green(); // g
-            pixels[offset + 2] = color.red(); // r
-            pixels[offset + 3] = SDL_ALPHA_OPAQUE; // a
+            pixels->at(offset + 0) = color.blue(); // b
+            pixels->at(offset + 1) = color.green(); // g
+            pixels->at(offset + 2) = color.red(); // r
+            pixels->at(offset + 3) = SDL_ALPHA_OPAQUE; // a
         }
     }
-    return pixels;
 }
 
 int main()
@@ -109,6 +113,7 @@ int main()
     Uint64 start = SDL_GetPerformanceCounter();
 
     int i = 0;
+    std::vector<unsigned char> pixels(screen_width * screen_height * 4, 0);
 
     while (running)
     {
@@ -170,13 +175,27 @@ int main()
         }
 
         // splat down some random pixels
-        std::vector<unsigned char> pixels = fill_buffer(sc);
+        // std::vector<unsigned char> pixels = fill_buffer(sc);
+        double y_num = screen_height / max_threads;
+        std::vector<std::thread> threads;
+        for (int i = 0; i < max_threads - 1; i++)
+        {
+            threads.push_back(std::thread(fill_buffer, sc, i * y_num,
+                                          (i + 1) * y_num, &pixels));
+        }
+        fill_buffer(sc, (max_threads - 1) * y_num, max_threads * y_num,
+                    &pixels);
+        for (int i = 0; i < max_threads - 1; i++)
+        {
+            threads[i].join();
+        }
 
         Vector3 sunpos(i, i, -100);
         // sc.move_sun(sunpos);
 
-        sc.move_sun(Vector3(i + sc.get_camera().get_position().x(),
-                            i + sc.get_camera().get_position().y(), -100));
+        sc.move_sun(Vector3(i + sc.get_camera().get_position().x() - 256,
+                            i + sc.get_camera().get_position().y() - 256,
+                            -100));
 
         i = (i + 5) % (16 * 32);
 

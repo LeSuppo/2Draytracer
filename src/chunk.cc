@@ -11,16 +11,16 @@ Chunk::Chunk(int pos_x, int pos_y, int size, Terrain_Noise terrain)
     {
         for (int x = 0; x < size; x++)
         {
-            Vector3 a1 =
-                Vector3(x + 1, y, terrain.get_noise(pos_x + x + 1, pos_y + y));
-            Vector3 a2 =
-                Vector3(x - 1, y, terrain.get_noise(pos_x + x - 1, pos_y + y));
-            Vector3 b1 =
-                Vector3(x, y + 1, terrain.get_noise(pos_x + x, pos_y + y + 1));
-            Vector3 b2 =
-                Vector3(x, y - 1, terrain.get_noise(pos_x + x, pos_y + y - 1));
-            Vector3 a = (a2 - a1).normalized();
-            Vector3 b = (b2 - b1).normalized();
+            Vector3 a1 = Vector3(x + 1, y + 1,
+                                 -terrain.get_noise(pos_x + x + 1, pos_y + y));
+            Vector3 a2 = Vector3(x - 1, y - 1,
+                                 -terrain.get_noise(pos_x + x - 1, pos_y + y));
+            Vector3 b1 = Vector3(x - 1, y + 1,
+                                 -terrain.get_noise(pos_x + x, pos_y + y + 1));
+            Vector3 b2 = Vector3(x + 1, y - 1,
+                                 -terrain.get_noise(pos_x + x, pos_y + y - 1));
+            Vector3 a = (a1 - a2).normalized();
+            Vector3 b = (b1 - b2).normalized();
             Vector3 normal = cross(a, b);
             Color grass(0, 154, 22);
             Color sand(248, 214, 114);
@@ -28,33 +28,30 @@ Chunk::Chunk(int pos_x, int pos_y, int size, Terrain_Noise terrain)
             Color snow(255, 250, 250);
             Color water(0, 84, 148);
             int noise = terrain.get_noise(pos_x + x, pos_y + y);
-            Pixel p =
-                Pixel(pos_x + x, pos_y + y, noise, grass, normal.normalized());
-            if (p.get_slope() > 0.2)
+            Color c = grass;
+            int water_level = 120;
+            if (noise <= water_level + 5)
             {
-                p = Pixel(pos_x + x, pos_y + y, noise, stone,
-                          normal.normalized());
-            }
-            if (noise <= 55)
-            {
-                p = Pixel(pos_x + x, pos_y + y, noise, sand,
-                          normal.normalized());
-            }
-            if (noise <= 50)
-            {
-                p = Pixel(pos_x + x, pos_y + y, noise, water, Vector3(0, 0, 1));
+                c = sand;
             }
 
             if (noise >= 200)
             {
-                p = Pixel(pos_x + x, pos_y + y, noise, snow,
-                          normal.normalized());
+                c = snow;
             }
-            if ((pos_x == size * size && pos_y == size * size)
-                || (pos_x == 0 && pos_y == 0))
+            Pixel p =
+                Pixel(pos_x + x, pos_y + y, noise, c, normal.normalized());
+            if (noise <= water_level)
             {
-                p = Pixel(pos_x + x, pos_y + y, 0, Color(255, 0, 0),
-                          Vector3(0, 0, 1));
+                p = Pixel(pos_x + x, pos_y + y, noise, water, Vector3(0, 0, 1));
+            }
+            else
+            {
+                if (p.get_slope() > 0.7)
+                {
+                    // p = Pixel(pos_x + x, pos_y + y, noise, stone,
+                    //           normal.normalized());
+                }
             }
             pixels_.push_back(p);
         }
