@@ -71,6 +71,11 @@ public:
         light_.set_position(vec);
     }
 
+    size_t get_chunk_size()
+    {
+        return chunk_size_;
+    }
+
 private:
     std::vector<Chunk> chunks_;
     Light light_;

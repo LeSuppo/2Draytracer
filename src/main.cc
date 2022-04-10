@@ -15,11 +15,11 @@ const double fov_h = 110;
 double dist_to_screen = 1;
 const int max_threads = std::thread::hardware_concurrency();
 
-void move(Scene &sc)
+void move(Scene &sc, double offset)
 {
     Vector3 r = sc.get_camera().get_position();
-    double x_hit = r.x() - 256;
-    double y_hit = r.y() - 256;
+    double x_hit = r.x() - offset;
+    double y_hit = r.y() - offset;
     sc.update_chunks(x_hit, y_hit);
 }
 
@@ -91,14 +91,13 @@ int main()
     int base_x = 0;
     int base_y = 0;
     size_t chunk_size = 16;
-    size_t nb_chunks_x = 32;
-    size_t nb_chunks_y = 32;
-    Camera cam(Vector3(base_x + nb_chunks_x * chunk_size / 2,
-                       base_y + nb_chunks_y * chunk_size / 2, -100),
+    size_t nb_chunks = 32;
+    Camera cam(Vector3(base_x + nb_chunks * chunk_size / 2,
+                       base_y + nb_chunks * chunk_size / 2, -100),
                fov_w / 2, fov_h / 2, dist_to_screen);
 
-    Scene sc(cam, 1, seed, nb_chunks_x, nb_chunks_y, base_x, base_y,
-             chunk_size);
+    Scene sc(cam, 1, seed, nb_chunks, nb_chunks, base_x, base_y, chunk_size);
+    double offset = chunk_size * chunk_size;
 
     SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
                                              SDL_TEXTUREACCESS_STREAMING,
@@ -142,28 +141,28 @@ int main()
             {
                 sc.move_camera(sc.get_camera().get_vertical().normalized()
                                * -10);
-                move(sc);
+                move(sc, offset);
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_RIGHT == event.key.keysym.scancode)
             {
                 sc.move_camera(sc.get_camera().get_horizontal().normalized()
                                * 10);
-                move(sc);
+                move(sc, offset);
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_LEFT == event.key.keysym.scancode)
             {
                 sc.move_camera(sc.get_camera().get_horizontal().normalized()
                                * -10);
-                move(sc);
+                move(sc, offset);
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_DOWN == event.key.keysym.scancode)
             {
                 sc.move_camera(sc.get_camera().get_vertical().normalized()
                                * 10);
-                move(sc);
+                move(sc, offset);
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_I == event.key.keysym.scancode)
@@ -205,12 +204,11 @@ int main()
 
         Vector3 sunpos(i, i, -100);
         // sc.move_sun(sunpos);
-
-        sc.move_sun(Vector3(i + sc.get_camera().get_position().x() - 256,
-                            i + sc.get_camera().get_position().y() - 256,
+        sc.move_sun(Vector3(i + sc.get_camera().get_position().x() - offset,
+                            i + sc.get_camera().get_position().y() - offset,
                             -100));
 
-        i = (i + 5) % (16 * 32);
+        i = (i + 5) % (chunk_size * nb_chunks);
 
         if (useLocktexture)
         {
