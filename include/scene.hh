@@ -56,6 +56,11 @@ public:
         camera_.change_pos(vec);
     }
 
+    void rotate_camera(double angle)
+    {
+        camera_.rotate(angle);
+    }
+
     Light get_sun() const
     {
         return light_;

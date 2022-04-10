@@ -2,6 +2,30 @@
 
 #include <iostream>
 
+void Camera::rotate(double angle)
+{
+    double beta = degrees_to_radians(angle);
+
+    double px = lower_left_corner_.x() - center_.x();
+    double py = lower_left_corner_.y() - center_.y();
+
+    double cx = px * cos(beta) - py * sin(beta);
+    double cy = px * sin(beta) + py * cos(beta);
+    double cz = lower_left_corner_.z();
+
+    lower_left_corner_ = Vector3(cx + center_.x(), cy + center_.y(), cz);
+
+    double hx = horizontal_.x() * cos(beta) - horizontal_.y() * sin(beta);
+    double hy = horizontal_.x() * sin(beta) + horizontal_.y() * cos(beta);
+    double hz = horizontal_.z();
+    horizontal_ = Vector3(hx, hy, hz);
+
+    double vx = vertical_.x() * cos(beta) - vertical_.y() * sin(beta);
+    double vy = vertical_.x() * sin(beta) + vertical_.y() * cos(beta);
+    double vz = horizontal_.z();
+    vertical_ = Vector3(vx, vy, vz);
+}
+
 Camera::Camera(Vector3 center, double fov_v, double fov_h, double z_min)
 {
     z_min_ = z_min;

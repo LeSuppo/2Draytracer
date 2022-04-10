@@ -27,7 +27,6 @@ void fill_buffer(const Scene &sc, double miny, double maxy,
                  std::vector<unsigned char> *pixels)
 {
     // std::vector<unsigned char> pixels(screen_width * screen_height * 4, 0);
-    // for (size_t y = screen_height - 1; y < screen_height; y--)
     for (double y = miny; y < maxy; y++)
     {
         for (double x = 0; x < screen_width; x++)
@@ -141,25 +140,29 @@ int main()
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_UP == event.key.keysym.scancode)
             {
-                sc.move_camera(Vector3(0, -10, 0));
+                sc.move_camera(sc.get_camera().get_vertical().normalized()
+                               * -10);
                 move(sc);
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_RIGHT == event.key.keysym.scancode)
             {
-                sc.move_camera(Vector3(10, 0, 0));
+                sc.move_camera(sc.get_camera().get_horizontal().normalized()
+                               * 10);
                 move(sc);
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_LEFT == event.key.keysym.scancode)
             {
-                sc.move_camera(Vector3(-10, 0, 0));
+                sc.move_camera(sc.get_camera().get_horizontal().normalized()
+                               * -10);
                 move(sc);
             }
             if (SDL_KEYDOWN == event.type
                 && SDL_SCANCODE_DOWN == event.key.keysym.scancode)
             {
-                sc.move_camera(Vector3(0, 10, 0));
+                sc.move_camera(sc.get_camera().get_vertical().normalized()
+                               * 10);
                 move(sc);
             }
             if (SDL_KEYDOWN == event.type
@@ -171,6 +174,16 @@ int main()
                 && SDL_SCANCODE_O == event.key.keysym.scancode)
             {
                 sc.move_camera(Vector3(0, 0, -5));
+            }
+            if (SDL_KEYDOWN == event.type
+                && SDL_SCANCODE_E == event.key.keysym.scancode)
+            {
+                sc.rotate_camera(5);
+            }
+            if (SDL_KEYDOWN == event.type
+                && SDL_SCANCODE_Q == event.key.keysym.scancode)
+            {
+                sc.rotate_camera(-5);
             }
         }
 

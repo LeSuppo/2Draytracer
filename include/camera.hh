@@ -17,6 +17,16 @@ public:
         return center_;
     }
 
+    Vector3 get_horizontal()
+    {
+        return horizontal_;
+    }
+
+    Vector3 get_vertical()
+    {
+        return vertical_;
+    }
+
     void change_pos(Vector3 pos)
     {
         if ((center_ + pos).z() >= 0) //|| (center_ + pos).z() < -170)
@@ -32,6 +42,8 @@ public:
     }
 
     void set_position(Vector3 pos);
+
+    void rotate(double angle);
 
 private:
     Vector3 center_;
