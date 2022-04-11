@@ -3,7 +3,8 @@
 ## 2D real time Raytracer
 
 ### *How to compile:*
-Have SDL and Makefile installed and then run `make exe`
+- Have Makefile installed, and if needed: SDL 
+- run `make exe`
 
 This project is a 2D Raytracer with a simple procedural world generation using the Simplex noise library FastNoiseLite
 
