@@ -71,9 +71,9 @@ int main()
     double seed = std::rand();
     SDL_Init(SDL_INIT_EVERYTHING);
 
-    SDL_Window *window = SDL_CreateWindow("Bite", SDL_WINDOWPOS_UNDEFINED,
-                                          SDL_WINDOWPOS_UNDEFINED, screen_width,
-                                          screen_height, SDL_WINDOW_SHOWN);
+    SDL_Window *window = SDL_CreateWindow(
+        "2D Raytracer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+        screen_width, screen_height, SDL_WINDOW_SHOWN);
 
     SDL_Renderer *renderer =
         SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
