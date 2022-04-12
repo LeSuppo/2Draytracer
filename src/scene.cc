@@ -1,5 +1,19 @@
 #include "scene.hh"
 
+void Scene::update_chunks()
+{
+    chunks_.clear();
+    for (size_t y = 0; y < chunk_number_y_; y++)
+    {
+        for (size_t x = 0; x < chunk_number_x_; x++)
+        {
+            Chunk c =
+                Chunk(x_base_ + x * chunk_size_, y_base_ + y * chunk_size_,
+                      chunk_size_, terrain_, octave_, persistence_, scale_);
+            chunks_.push_back(c);
+        }
+    }
+}
 void Scene::update_chunks(int x, int y)
 {
     int a = x / chunk_size_;
@@ -20,7 +34,7 @@ void Scene::update_chunks(int x, int y)
         for (size_t i = 0; i < chunk_number_y_; i++)
         {
             Chunk c = Chunk(x_base_, y_base_ + i * chunk_size_, chunk_size_,
-                            terrain_);
+                            terrain_, octave_, persistence_, scale_);
             chunks_[i * chunk_number_x_] = c;
         }
     }
@@ -38,7 +52,8 @@ void Scene::update_chunks(int x, int y)
         for (size_t i = 0; i < chunk_number_y_; i++)
         {
             Chunk c = Chunk(x_base_ + (chunk_number_x_ - 1) * chunk_size_,
-                            y_base_ + (i)*chunk_size_, chunk_size_, terrain_);
+                            y_base_ + (i)*chunk_size_, chunk_size_, terrain_,
+                            octave_, persistence_, scale_);
             chunks_[i * chunk_number_x_ + chunk_number_x_ - 1] = c;
         }
     }
@@ -57,7 +72,7 @@ void Scene::update_chunks(int x, int y)
         for (size_t i = 0; i < chunk_number_x_; i++)
         {
             Chunk c = Chunk(x_base_ + i * chunk_size_, y_base_, chunk_size_,
-                            terrain_);
+                            terrain_, octave_, persistence_, scale_);
             chunks_[i] = c;
         }
     }
@@ -74,9 +89,10 @@ void Scene::update_chunks(int x, int y)
         }
         for (size_t i = 0; i < chunk_number_x_; i++)
         {
-            Chunk c = Chunk(x_base_ + i * chunk_size_,
-                            y_base_ + (chunk_number_y_ - 1) * chunk_size_,
-                            chunk_size_, terrain_);
+            Chunk c =
+                Chunk(x_base_ + i * chunk_size_,
+                      y_base_ + (chunk_number_y_ - 1) * chunk_size_,
+                      chunk_size_, terrain_, octave_, persistence_, scale_);
             chunks_[(chunk_number_y_ - 1) * chunk_number_x_ + i] = c;
         }
     }

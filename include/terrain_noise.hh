@@ -11,9 +11,9 @@ public:
         noise_.SetSeed(seed);
     }
 
-    int get_noise(int x, int y)
+    int get_noise(int x, int y, size_t octave, double persistence, double scale)
     {
-        double terrain = sum_octave(16, x, y, 0.4, 0.3, 0, 255);
+        double terrain = sum_octave(octave, x, y, persistence, scale, 0, 255);
         return static_cast<int>(terrain);
     }
 

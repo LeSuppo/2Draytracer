@@ -2,23 +2,35 @@
 
 #include <iostream>
 
-Chunk::Chunk(int pos_x, int pos_y, int size, Terrain_Noise terrain)
+Chunk::Chunk(int pos_x, int pos_y, int size, Terrain_Noise terrain,
+             size_t octave, double persistence, double scale)
     : x_(pos_x)
     , y_(pos_y)
     , size_(size)
+    , octave_(octave)
+    , persistence_(persistence)
+    , scale_(scale)
 {
     for (int y = 0; y < size; y++)
     {
         for (int x = 0; x < size; x++)
         {
-            Vector3 a1 = Vector3(x + 1, y + 1,
-                                 -terrain.get_noise(pos_x + x + 1, pos_y + y));
-            Vector3 a2 = Vector3(x - 1, y - 1,
-                                 -terrain.get_noise(pos_x + x - 1, pos_y + y));
-            Vector3 b1 = Vector3(x - 1, y + 1,
-                                 -terrain.get_noise(pos_x + x, pos_y + y + 1));
-            Vector3 b2 = Vector3(x + 1, y - 1,
-                                 -terrain.get_noise(pos_x + x, pos_y + y - 1));
+            Vector3 a1 =
+                Vector3(x + 1, y + 1,
+                        -terrain.get_noise(pos_x + x + 1, pos_y + y, octave,
+                                           persistence, scale));
+            Vector3 a2 =
+                Vector3(x - 1, y - 1,
+                        -terrain.get_noise(pos_x + x - 1, pos_y + y, octave,
+                                           persistence, scale));
+            Vector3 b1 =
+                Vector3(x - 1, y + 1,
+                        -terrain.get_noise(pos_x + x, pos_y + y + 1, octave,
+                                           persistence, scale));
+            Vector3 b2 =
+                Vector3(x + 1, y - 1,
+                        -terrain.get_noise(pos_x + x, pos_y + y - 1, octave,
+                                           persistence, scale));
             Vector3 a = (a1 - a2).normalized();
             Vector3 b = (b1 - b2).normalized();
             Vector3 normal = cross(a, b);
@@ -27,7 +39,7 @@ Chunk::Chunk(int pos_x, int pos_y, int size, Terrain_Noise terrain)
             Color stone(136, 140, 141);
             Color snow(255, 250, 250);
             Color water(0, 84, 148);
-            int noise = terrain.get_noise(pos_x + x, pos_y + y);
+            int noise = terrain.get_noise(pos_x + x, pos_y + y, 16, 0.4, 0.3);
             Color c = grass;
             int water_level = 120;
             if (noise <= water_level + 5)

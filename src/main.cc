@@ -96,7 +96,8 @@ int main()
                        base_y + nb_chunks * chunk_size / 2, -100),
                fov_w / 2, fov_h / 2, dist_to_screen);
 
-    Scene sc(cam, 1, seed, nb_chunks, nb_chunks, base_x, base_y, chunk_size);
+    Scene sc(cam, 1, seed, nb_chunks, nb_chunks, base_x, base_y, chunk_size, 16,
+             0.4, 0.3);
     double offset = chunk_size * chunk_size;
 
     SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
@@ -183,6 +184,42 @@ int main()
                 && SDL_SCANCODE_Q == event.key.keysym.scancode)
             {
                 sc.rotate_camera(-5);
+            }
+            if (SDL_KEYDOWN == event.type
+                && SDL_SCANCODE_N == event.key.keysym.scancode)
+            {
+                sc.update_persistence(0.1);
+                sc.update_chunks();
+            }
+            if (SDL_KEYDOWN == event.type
+                && SDL_SCANCODE_M == event.key.keysym.scancode)
+            {
+                sc.update_persistence(-0.1);
+                sc.update_chunks();
+            }
+            if (SDL_KEYDOWN == event.type
+                && SDL_SCANCODE_V == event.key.keysym.scancode)
+            {
+                sc.update_scale(0.1);
+                sc.update_chunks();
+            }
+            if (SDL_KEYDOWN == event.type
+                && SDL_SCANCODE_B == event.key.keysym.scancode)
+            {
+                sc.update_scale(-0.1);
+                sc.update_chunks();
+            }
+            if (SDL_KEYDOWN == event.type
+                && SDL_SCANCODE_X == event.key.keysym.scancode)
+            {
+                sc.update_octave(1);
+                sc.update_chunks();
+            }
+            if (SDL_KEYDOWN == event.type
+                && SDL_SCANCODE_C == event.key.keysym.scancode)
+            {
+                sc.update_octave(-1);
+                sc.update_chunks();
             }
         }
 
